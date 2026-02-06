@@ -1,35 +1,106 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import './styles.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+import Display from './components/Display'
+import Keypad from './components/Keypad'
+
+type Operacion = '+' | '-' | '×' | '÷' | null
+
+export default function App() {
+  const [display, setDisplay] = useState<string>('0')
+  const [primerNumero, setPrimerNumero] = useState<number | null>(null)
+  const [operacion, setOperacion] = useState<Operacion>(null)
+  const [esperandoSegundo, setEsperandoSegundo] = useState<boolean>(false)
+
+  const escribirDigito = (d: string) => {
+    if (esperandoSegundo) {
+      setDisplay(d)
+      setEsperandoSegundo(false)
+      return
+    }
+
+    if (display === '0') {
+      setDisplay(d)
+    } else {
+      setDisplay(display + d)
+    }
+  }
+
+  const escribirPunto = () => {
+    if (esperandoSegundo) {
+      setDisplay('0.')
+      setEsperandoSegundo(false)
+      return
+    }
+    if (!display.includes('.')) {
+      setDisplay(display + '.')
+    }
+  }
+
+  const limpiar = () => {
+    setDisplay('0')
+    setPrimerNumero(null)
+    setOperacion(null)
+    setEsperandoSegundo(false)
+  }
+
+  const elegirOperacion = (op: Operacion) => {
+    const actual = Number(display)
+
+    if (primerNumero === null) {
+      setPrimerNumero(actual)
+      setOperacion(op)
+      setEsperandoSegundo(true)
+      return
+    }
+
+    if (operacion && !esperandoSegundo) {
+      const resultado = calcular(primerNumero, actual, operacion)
+      setDisplay(String(resultado))
+      setPrimerNumero(resultado)
+      setOperacion(op)
+      setEsperandoSegundo(true)
+      return
+    }
+
+    setOperacion(op)
+    setEsperandoSegundo(true)
+  }
+
+  const calcular = (a: number, b: number, op: Exclude<Operacion, null>) => {
+    if (op === '+') return a + b
+    if (op === '-') return a - b
+    if (op === '×') return a * b
+    return a / b
+  }
+
+  const igual = () => {
+    if (primerNumero === null || operacion === null) return
+
+    const segundo = Number(display)
+    const resultado = calcular(primerNumero, segundo, operacion)
+
+    setDisplay(String(resultado))
+    setPrimerNumero(null)
+    setOperacion(null)
+    setEsperandoSegundo(false)
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <main className="app">
+      <h1 className="title">Calculadora</h1>
+
+      <section className="calculator">
+        <Display value={display} />
+
+        <Keypad
+          onDigit={escribirDigito}
+          onDot={escribirPunto}
+          onOperation={elegirOperacion}
+          onClear={limpiar}
+          onEqual={igual}
+        />
+      </section>
+    </main>
   )
 }
-
-export default App

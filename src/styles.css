@@ -1,0 +1,63 @@
+.app {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.title {
+  margin: 0 0 12px 0;
+  text-align: center;
+}
+
+.calculator {
+  width: 320px;
+  border: 2px solid #eee;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.display {
+  border: 2px solid #eee;
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 28px;
+  text-align: right;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.btn {
+  height: 54px;
+  border: 2px solid #eee;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.btn.wide {
+  grid-column: span 2;
+}
+
+.btn.equal {
+  grid-column: span 3;
+}
+
+.btn.op {
+  font-weight: bold;
+}
+
+.btn.danger {
+  font-weight: bold;
+}
