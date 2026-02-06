@@ -1,10 +1,13 @@
 import Button from './Button'
 
+type Op = '+' | '-' | '×' | '÷'
+
 interface Props {
   onDigit: (d: string) => void
   onDot: () => void
-  onOperation: (op: '+' | '-' | '×' | '÷') => void
+  onOperation: (op: Op) => void
   onClear: () => void
+  onClearLast: () => void
   onEqual: () => void
 }
 
@@ -13,9 +16,9 @@ export default function Keypad({
   onDot,
   onOperation,
   onClear,
+  onClearLast,
   onEqual
 }: Props) {
-
   return (
     <div className="keypad">
       <Button label="1" onClick={() => onDigit('1')} />
@@ -37,6 +40,7 @@ export default function Keypad({
       <Button label="." onClick={onDot} />
       <Button label="÷" className="op" onClick={() => onOperation('÷')} />
 
+      <Button label="DEL" className="danger" onClick={onClearLast} />
       <Button label="C" className="danger" onClick={onClear} />
       <Button label="=" className="equal" onClick={onEqual} />
     </div>

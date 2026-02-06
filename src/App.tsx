@@ -44,7 +44,26 @@ export default function App() {
     setEsperandoSegundo(false)
   }
 
-  const elegirOperacion = (op: Operacion) => {
+  const borrarUltimo = () => {
+    if (esperandoSegundo) return
+
+    if (display.length === 1) {
+      setDisplay('0')
+    } else {
+      setDisplay(display.slice(0, -1))
+    }
+  }
+
+  const calcular = (a: number, b: number, op: Exclude<Operacion, null>) => {
+    if (op === '+') return a + b
+    if (op === '-') return a - b
+    if (op === '×') return a * b
+
+    if (b === 0) return 0
+    return a / b
+  }
+
+  const elegirOperacion = (op: Exclude<Operacion, null>) => {
     const actual = Number(display)
 
     if (primerNumero === null) {
@@ -65,13 +84,6 @@ export default function App() {
 
     setOperacion(op)
     setEsperandoSegundo(true)
-  }
-
-  const calcular = (a: number, b: number, op: Exclude<Operacion, null>) => {
-    if (op === '+') return a + b
-    if (op === '-') return a - b
-    if (op === '×') return a * b
-    return a / b
   }
 
   const igual = () => {
@@ -97,6 +109,7 @@ export default function App() {
           onDigit={escribirDigito}
           onDot={escribirPunto}
           onOperation={elegirOperacion}
+          onClearLast={borrarUltimo}
           onClear={limpiar}
           onEqual={igual}
         />

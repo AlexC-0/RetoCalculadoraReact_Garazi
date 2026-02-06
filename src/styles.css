@@ -28,6 +28,10 @@
   align-items: center;
   justify-content: flex-end;
   margin-bottom: 12px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .keypad {
