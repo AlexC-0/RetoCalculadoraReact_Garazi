@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './styles.css'
 
 import Display from './components/Display'
@@ -97,6 +97,60 @@ export default function App() {
     setOperacion(null)
     setEsperandoSegundo(false)
   }
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      const key = e.key
+
+      if (key >= '0' && key <= '9') {
+        escribirDigito(key)
+        return
+      }
+
+      if (key === '.') {
+        escribirPunto()
+        return
+      }
+
+      if (key === '+') {
+        elegirOperacion('+')
+        return
+      }
+
+      if (key === '-') {
+        elegirOperacion('-')
+        return
+      }
+
+      if (key === '*' || key.toLowerCase() === 'x') {
+        elegirOperacion('×')
+        return
+      }
+
+      if (key === '/') {
+        elegirOperacion('÷')
+        return
+      }
+
+      if (key === 'Enter' || key === '=') {
+        igual()
+        return
+      }
+
+      if (key === 'Backspace') {
+        borrarUltimo()
+        return
+      }
+
+      if (key === 'Escape') {
+        limpiar()
+        return
+      }
+    }
+
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [display, primerNumero, operacion, esperandoSegundo])
 
   return (
     <main className="app">
