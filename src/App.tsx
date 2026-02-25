@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import './styles.css'
 
 import Display from './components/Display'
@@ -12,7 +12,7 @@ export default function App() {
   const [operacion, setOperacion] = useState<Operacion>(null)
   const [esperandoSegundo, setEsperandoSegundo] = useState<boolean>(false)
 
-  const escribirDigito = (d: string) => {
+  const escribirDigito = useCallback((d: string) => {
     if (esperandoSegundo) {
       setDisplay(d)
       setEsperandoSegundo(false)
@@ -24,9 +24,9 @@ export default function App() {
     } else {
       setDisplay(display + d)
     }
-  }
+  }, [display, esperandoSegundo])
 
-  const escribirPunto = () => {
+  const escribirPunto = useCallback(() => {
     if (esperandoSegundo) {
       setDisplay('0.')
       setEsperandoSegundo(false)
@@ -35,16 +35,16 @@ export default function App() {
     if (!display.includes('.')) {
       setDisplay(display + '.')
     }
-  }
+  }, [display, esperandoSegundo])
 
-  const limpiar = () => {
+  const limpiar = useCallback(() => {
     setDisplay('0')
     setPrimerNumero(null)
     setOperacion(null)
     setEsperandoSegundo(false)
-  }
+  }, [])
 
-  const borrarUltimo = () => {
+  const borrarUltimo = useCallback(() => {
     if (esperandoSegundo) return
 
     if (display.length === 1) {
@@ -52,18 +52,16 @@ export default function App() {
     } else {
       setDisplay(display.slice(0, -1))
     }
-  }
+  }, [display, esperandoSegundo])
 
   const calcular = (a: number, b: number, op: Exclude<Operacion, null>) => {
     if (op === '+') return a + b
     if (op === '-') return a - b
     if (op === '×') return a * b
-
-    if (b === 0) return 0
     return a / b
   }
 
-  const elegirOperacion = (op: Exclude<Operacion, null>) => {
+  const elegirOperacion = useCallback((op: Exclude<Operacion, null>) => {
     const actual = Number(display)
 
     if (primerNumero === null) {
@@ -84,19 +82,19 @@ export default function App() {
 
     setOperacion(op)
     setEsperandoSegundo(true)
-  }
+  }, [display, operacion, esperandoSegundo, primerNumero])
 
-  const igual = () => {
+  const igual = useCallback(() => {
     if (primerNumero === null || operacion === null) return
 
     const segundo = Number(display)
     const resultado = calcular(primerNumero, segundo, operacion)
 
-    setDisplay(String(resultado))
+    setDisplay(Number.isFinite(resultado) ? String(resultado) : 'Error')
     setPrimerNumero(null)
     setOperacion(null)
     setEsperandoSegundo(false)
-  }
+  }, [display, operacion, primerNumero])
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -150,7 +148,7 @@ export default function App() {
 
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [display, primerNumero, operacion, esperandoSegundo])
+  }, [borrarUltimo, elegirOperacion, escribirDigito, escribirPunto, igual, limpiar])
 
   return (
     <main className="app">
